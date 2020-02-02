@@ -1,0 +1,377 @@
+`This is a demonstration of some of the
+ most fundamental features of my language.
+ `multiline comments can be nested.` - me
+.`
+
+print('Hello, World!')
+
+let big_break = () ->
+{
+	for i in 0 to 4
+		print()
+}
+big_break()
+
+; Named function:
+let mult = (x, y) ->
+{
+	print(x * y)
+}
+
+mult(10, 20)
+
+; Anonymous function:
+div(x, y) ->
+{
+	print(x / y)
+}
+
+div(10, 3)
+
+; Lambda function:
+let squared = x -> print(x * x)
+
+squared(4)
+
+print()
+
+; Currying:
+printPowersOfTwo(start) -> end ->
+{
+	for i in start to end
+		print(1 << i)
+}
+
+printPowersOfTwo(3)(10)
+print()
+
+; Another currying example:
+let Print = x ->
+{
+	print(x) if x != null	 else print()
+	return Print
+}
+Print('foo')('bar')('')
+
+; First-class function:
+eval(x, op) -> op(x)
+print(eval(10, (x) ->
+{
+	return x * x
+}))
+
+big_break()
+
+; Functional:
+fibonacci(x) ->
+{
+	; Trailing if:
+	return 1 if x <= 1
+	; Equivalent to:
+	; if i <= 1, return 1
+	
+	return fibonacci(x - 2) + fibonacci(x - 1)
+}
+
+for fib in 20
+	print(fibonacci(fib))
+
+big_break()
+
+; Imperative:
+{
+	; Chained declarations:
+	let a = 0,
+    	b = 1,
+	    c = 0
+	for fib in 20
+	{
+		c = a + b
+		a = b
+		b = c
+		print(a)
+	}
+}
+
+big_break()
+
+; Constant
+dec PI = 3.14159
+
+; Hash set:
+dec Math = #{
+	PI = PI,
+	circleArea(radius) -> this:PI * radius ^ 2
+}
+
+; Composition:
+dec foo = #{
+	:> Math
+}
+
+print(foo:PI)
+
+print(Math:PI)
+print(Math:circleArea(10))
+print(Math['circleArea'](10))
+
+big_break()
+
+; FizzBuzz:
+
+fizzBuzz(max) -> iteration ->
+{
+	return null if iteration > max
+	
+	if iteration % 15 == 0 
+	{
+		print('FizzBuzz')
+	}
+	else if iteration % 3 == 0
+	{
+		print('Fizz') 
+	}
+	else if iteration % 5 == 0
+	{
+		print('Buzz')
+	}
+	else
+	{
+		print(iteration)
+	}
+	
+	return fizzBuzz(max)(iteration + 1)
+}
+fizzBuzz(100)(1)
+
+big_break()
+
+; While loop:
+while true
+{
+	let foo = randomInt(-255, 255)
+	print(foo)
+	continue if foo < 30
+	break if foo < 40
+}
+; Else clauses also apply to loops:
+else
+	print('The last loop did not execute.')
+
+let number = 0
+
+redo {
+	print()
+	print('Executed', number)
+	number = randomInt(0, 50)
+	print('Trying', number)
+} while number > 10 else print ('Did not repeat')
+
+
+print()
+
+; Right associative operation:
+print(10 + 2 ^ 3 ^ 4)
+
+big_break()
+
+let a = 20
+let b = 5
+let c = -5
+print(a, b, c)
+
+; Assignment is an operation:
+a = b = c = 100
+print(a, b, c)
+big_break()
+
+; Define and call:
+
+{
+	dec foo = () ->
+	{
+		print('called')
+		return 'baf'
+	}()
+	print(foo)
+}
+
+big_break()
+
+let x = 60
+let y = 40
+{
+	; Use blocks:
+	let a = use x
+	{
+		x = y * 30
+		return x
+	}
+	print(a)
+	
+	use x, y
+	{
+		x = x / 5
+		y = y * 3
+		print(x * y)
+	}
+	print(use (x)
+	{
+		x = 42
+		return x
+	})
+	
+	; Note that a use block is merely a cleaner way of writing this:
+	
+	(x, y) ->
+	{
+		x = x / 5
+		y = y * 3
+		print(x * y)
+	}(x, y)
+	
+	`The above is grammatically correct, as far as the parser's concerned, but a tad weird; this is actually one of the corner cases where my language's grammar for functions differs from JavaScript's arrow functions, whereas JavaScript would require grouping parentheses around the function before the call, my parser parses it either way.`
+	
+	print(x ->
+	{
+		x = 42
+		return x
+	}(x))
+	
+	print(x, y)
+}
+; Else clauses even apply to for loops!
+for i in 0
+	print('???')
+else
+	print('range was zero-length')
+
+big_break()
+
+;let doo = () -> 4
+dec fig = 30
+
+print(fig)
+{
+	; Uncomment for ERROR:
+	; print(fig)
+	dec fig = 40
+}
+print(fig)
+dec state_foo = 'global'
+{
+	; Uncomment for reference error :)
+	; print(state_foo)
+	dec state_foo = 'local'
+}
+; Assignment not allowed here:
+; if true dec doo = 'local'
+; if true foo(doo) -> doo * 2
+{
+	() ->
+	{
+		print('baf')
+	}()
+} ; if true
+`Uncommenting the if above results in an error; trailers cannot follow block statements, and if statements must begin on newline.`
+
+
+
+
+let test = 1
+
+if test == 2
+	print('foo')
+else
+	print('bar')
+
+print(test == 2? 'foo' else 'bar')
+
+
+; NOTE THAT if and while ARE NOT expressions, they can only begin or end a statement.
+
+
+
+dec tern = test < 2? 24 else 42
+print(tern)
+
+; Trailing while:
+test <<= 1 while test < 1000
+print(test)
+
+; NOTE that "trailers" can only follow a single statement or a repeat, an if/while after a block will be parsed as an if/while statement.
+
+
+; Switch block:
+{
+	dec x = 21
+	switch x
+	{
+		(30, 20, 60) -> print('foo')
+		(50, 75) -> print('bar')
+		21 -> print('reached')
+		; No assignments allowed:
+		; 60 -> dec foo = 5
+		
+		; ONLY case checks are permitted in switch blocks:
+		; print('error')
+	}
+	else
+		print('baz') ; Equiv. to standard 'default' case.
+	
+	; Case checks are not allowed outside of switch blocks:
+	; (0, 4, 5, 6) -> print('also error')
+
+	; Kotlin was an influence here.
+}
+
+let arr = [40, 50, [3, 4, 8]]
+print(arr)
+print(arr[2][1])
+arr[2][1] += 3
+print(arr[2][1])
+pop(arr)
+print(arr)
+push(arr, 30, 21)
+print(arr)
+{
+	dec arr = [20, 45, 10, 43, 224, 32, 31, -39, 14]
+	
+	print('SQUARED:')
+	print(map(arr, x -> x * x))
+	print('FILTERED (x < 30):')
+	print(filter(arr, x -> x < 30))
+	print('SORTED (least to greatest):')
+	print(sort(arr, (x, y) -> x < y))
+	print('SHUFFLED:')
+	print(shuffle(100)(arr))
+	print('ORIGINAL ARRAY:')
+	print(arr)
+}
+print()
+for i in arr
+	; Arrays can be looped through like this.
+ print(i)
+ 
+for i of arr
+	; This gives the element, not the index
+	print(i)
+else print('No elements.')
+print()
+
+; Not just arrays:
+for i of 'Hello, World!'
+	print(i)
+
+print()
+dec universe = #{
+	question = '???',
+	answer = 42
+}
+for part of universe
+	print(part)
+
+
+big_break()
+big_break()
+big_break()
