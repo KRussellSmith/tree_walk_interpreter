@@ -1,0 +1,79 @@
+; Standard array library for TORA!
+
+map(array, lambda) ->
+{
+	let result = []
+	for element of array
+		push(result, lambda(element))
+	return result
+}
+
+filter(array, lambda) ->
+{
+	let result = []
+	for element of array
+	{
+		continue if !lambda(element)
+		push(result, element)
+	}
+	return result
+}
+
+sort(array, lambda) ->
+{
+	let sorted = false
+	let result = []
+	
+	for element of array
+		push(result, element)
+	
+	return result if length(result) <= 1
+	
+	while !sorted
+	{
+		sorted = true
+		for i in length(result) - 1
+		{
+			dec curr = result[i]
+			dec next = result[i + 1]
+			if !lambda(curr, next)
+			{
+				sorted = false
+				result[i] = next
+				result[i + 1] = curr
+			}
+		}
+	}
+	return result
+}
+
+empty(array) ->
+{
+	pop(array) while length(array) > 0
+	return array
+}
+
+shuffle(ammount) -> array -> {
+	let result = []
+	for element of array
+		push(result, element)
+	
+	return result if length(result) <= 1
+	
+	let count = 0
+	while count < ammount
+	{
+		for i in length(result) - 1
+		{
+				if randomInt(0, 1) == 1
+				{
+					dec curr = result[i]
+					dec next = result[i + 1]
+					result[i] = next
+					result[i + 1] = curr
+				}
+		}
+		count += 1
+	}
+	return result
+}
